@@ -1,25 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component, lazy, Suspense } from "react";
+import { Route, Switch } from "react-router-dom";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import "./App.css";
+// import Header from "./components/Header/Header";
+const Header = lazy(() => import("./components/Header/Header"));
+const PhoneBook = lazy(() => import("./components/PhoneBook/PhoneBook"));
+const HomePage = lazy(() => import("./components/HomePage/HomePage"));
+const SignUpForm = lazy(() => import("./components/SignUpForm/SignUpForm"));
+const Login = lazy(() => import("./components/Login/Login"));
+
+class App extends Component {
+  render() {
+    return (
+      <div className="App">
+        <Suspense fallback={<div>loading...</div>}>
+          <Header />
+
+          <Switch>
+            <Route exact path="/" component={HomePage} />
+            <Route path="/phoneBook" component={PhoneBook} />
+            <Route path="/login" component={Login} />
+            <Route path="/signup" component={SignUpForm} />
+          </Switch>
+        </Suspense>
+      </div>
+    );
+  }
 }
 
 export default App;

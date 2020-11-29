@@ -1,0 +1,56 @@
+.contactList {
+  display: block;
+  list-style: none;
+  width: 320px;
+  padding: 0;
+}
+
+.contactList li {
+  margin-bottom: 20px;
+}
+
+.contactList li {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.contactList li span {
+  font-weight: 600;
+}
+
+.contactList li button {
+  background: url("../../helpers/close.svg") #e38a47 center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.contactList li button:hover {
+  transform: scale(1.05);
+}
+
+.enter {
+  opacity: 0;
+  transform: scale(0);
+}
+
+.enterActive {
+  opacity: 1;
+  transform: scale(1);
+  transition: all 250ms linear;
+}
+
+.exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.exitActive {
+  opacity: 0;
+  transform: scale(0);
+  transition: all 250ms linear;
+}

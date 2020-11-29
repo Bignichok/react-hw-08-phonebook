@@ -1,0 +1,24 @@
+.error {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 320px;
+  background-color: tomato;
+  padding: 8px;
+  text-align: center;
+  color: #ffffff;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.error button {
+  cursor: pointer;
+  border: none;
+  width: 20px;
+  padding: 5px;
+  background: url("../../helpers/close.svg") transparent center no-repeat;
+}
