@@ -12,8 +12,7 @@ class SignUpForm extends Component {
     password: "",
   };
 
-  handleChange = (e) => {
-    const target = e.target;
+  handleChange = ({ target }) => {
     this.setState({ [target.name]: target.value });
   };
 
@@ -41,6 +40,7 @@ class SignUpForm extends Component {
             id="emailSignUp"
             name="email"
             onChange={this.handleChange}
+            required
           />
         </div>
         <div>
@@ -52,6 +52,7 @@ class SignUpForm extends Component {
             id="loginSignUp"
             name="name"
             onChange={this.handleChange}
+            required
           />
         </div>
         <div>
@@ -63,6 +64,7 @@ class SignUpForm extends Component {
             id="passwordSignUp"
             name="password"
             onChange={this.handleChange}
+            required
           />
         </div>
         <button type="submit">Sign Up</button>

@@ -1,11 +1,21 @@
-import Axios from "axios";
+import axios from "axios";
 
 const BASE_URL = "https://goit-phonebook-api.herokuapp.com/";
 
-const instance = Axios.create({
+const instance = axios.create({
   baseURL: BASE_URL,
 });
 
+export const token = {
+  set(token) {
+    axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+    console.log(axios.defaults.headers.common.Authorization);
+  },
+
+  unset() {
+    axios.defaults.headers.common.Authorization = "";
+  },
+};
 export const contactsAPI = {
   getContacts() {
     return instance.get(`contacts`).then((resp) => resp.data);

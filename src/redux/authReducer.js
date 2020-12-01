@@ -1,4 +1,4 @@
-import { authAPI } from "../api/api";
+import { authAPI, token } from "../api/api";
 
 const SIGNUP_REQUEST = "SIGNUP_REQUEST";
 const SIGNUP_SUCCESS = "SIGNUP_SUCCESS";
@@ -30,6 +30,24 @@ const signupError = (error) => ({
   },
 });
 
+const loginRequest = () => ({ type: LOGIN_REQUEST });
+
+const loginSuccess = (user, token) => ({
+  type: LOGIN_SUCCESS,
+  payload: {
+    name: user.name,
+    email: user.email,
+    token,
+  },
+});
+
+const loginError = (error) => ({
+  type: LOGIN_ERROR,
+  payload: {
+    error,
+  },
+});
+
 const logoutRequest = () => ({ type: LOGOUT_REQUEST });
 
 const logoutSuccess = () => ({
@@ -44,27 +62,15 @@ const logoutError = (error) => ({
   },
 });
 
-const loginRequest = () => ({ type: LOGIN_REQUEST });
-
-const loginSuccess = () => ({
-  type: LOGIN_SUCCESS,
-  payload: {},
-});
-
-const loginError = (error) => ({
-  type: LOGIN_ERROR,
-  payload: {
-    error,
-  },
-});
-
 export const signUp = (name, email, password) => (dispatch) => {
   dispatch(signupRequest());
   authAPI
     .createNewUser(name, email, password)
     .then((resp) => {
       console.log(resp);
+
       dispatch(signupSuccess(resp.user, resp.token));
+      token.set(resp.token);
       return resp;
     })
     .catch((error) => dispatch(signupError(error)))
@@ -77,7 +83,9 @@ export const login = (email, password) => (dispatch) => {
     .login(email, password)
     .then((resp) => {
       console.log(resp);
-      dispatch(loginSuccess());
+      console.log(resp.user);
+      dispatch(loginSuccess(resp.user, resp.token));
+      token.set(resp.token);
       return resp;
     })
     .catch((error) => dispatch(loginError(error)))
@@ -90,6 +98,7 @@ export const logout = () => (dispatch) => {
     .logout()
     .then((resp) => {
       console.log(resp);
+      token.unset();
       dispatch(logoutSuccess());
       return resp;
     })
@@ -125,7 +134,15 @@ const authReducer = (state = initialState, { type, payload }) => {
       };
 
     case LOGIN_SUCCESS:
-      return state;
+      console.log(payload);
+      return {
+        ...state,
+        user: {
+          name: payload.name,
+          email: payload.email,
+        },
+        token: payload.token,
+      };
 
     case LOGIN_ERROR:
       return {

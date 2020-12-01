@@ -10,8 +10,7 @@ class Login extends Component {
     password: "",
   };
 
-  handleChange = (e) => {
-    const target = e.target;
+  handleChange = ({ target }) => {
     this.setState({ [target.name]: target.value });
   };
 
@@ -34,6 +33,7 @@ class Login extends Component {
             id="loginEmail"
             name="email"
             onChange={this.handleChange}
+            required
           />
         </div>
 
@@ -46,6 +46,7 @@ class Login extends Component {
             id="loginPassword"
             name="password"
             onChange={this.handleChange}
+            required
           />
         </div>
         <button type="submit">Login</button>
