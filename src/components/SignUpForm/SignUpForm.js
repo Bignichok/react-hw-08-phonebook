@@ -36,7 +36,7 @@ class SignUpForm extends Component {
             e-mail
           </label>
           <input
-            type="text"
+            type="email"
             id="emailSignUp"
             name="email"
             onChange={this.handleChange}

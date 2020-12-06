@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { login } from "../../redux/authReducer";
+import { getAuthError } from "../../redux/authSelectors";
 
 import styles from "./Login.module.css";
 
@@ -24,12 +25,13 @@ class Login extends Component {
     return (
       <form onSubmit={this.handleSubmit}>
         <h3>login</h3>
+        {this.props.error && <p>Email or password is incorrect, try again!</p>}
         <div>
           <label className={styles.formLabel} htmlFor="loginEmail">
             e-mail
           </label>
           <input
-            type="text"
+            type="email"
             id="loginEmail"
             name="email"
             onChange={this.handleChange}
@@ -55,8 +57,12 @@ class Login extends Component {
   }
 }
 
+const mapStateToProps = (state) => ({
+  error: getAuthError(state),
+});
+
 const mapDispatchToProps = {
   onLoginFormSubmit: login,
 };
 
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

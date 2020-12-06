@@ -9,8 +9,8 @@ export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_ERROR = "LOGIN_ERROR";
 
 const LOGOUT_REQUEST = "LOGOUT_REQUEST";
-const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
-const LOGOUT_ERROR = "LOGOUT_ERROR";
+export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
+export const LOGOUT_ERROR = "LOGOUT_ERROR";
 
 const GET_CURRENT_USER_REQUEST = "GET_CURRENT_USER_REQUEST";
 export const GET_CURRENT_USER_SUCCESS = "GET_CURRENT_USER_SUCCESS";
@@ -90,12 +90,10 @@ export const signUp = (name, email, password) => (dispatch) => {
   authAPI
     .createNewUser(name, email, password)
     .then((resp) => {
-      dispatch(signupSuccess(resp.user, resp.token));
       tokenController.set(resp.token);
-      return resp;
+      dispatch(signupSuccess(resp.user, resp.token));
     })
-    .catch((error) => dispatch(signupError(error)))
-    .finally(() => {});
+    .catch((error) => dispatch(signupError(error)));
 };
 
 export const login = (email, password) => (dispatch) => {
@@ -103,12 +101,10 @@ export const login = (email, password) => (dispatch) => {
   authAPI
     .login(email, password)
     .then((resp) => {
-      dispatch(loginSuccess(resp.user, resp.token));
       tokenController.set(resp.token);
-      return resp;
+      dispatch(loginSuccess(resp.user, resp.token));
     })
-    .catch((error) => dispatch(loginError(error)))
-    .finally(() => {});
+    .catch((error) => dispatch(loginError(error)));
 };
 
 export const logout = () => (dispatch) => {
@@ -118,10 +114,8 @@ export const logout = () => (dispatch) => {
     .then((resp) => {
       tokenController.unset();
       dispatch(logoutSuccess());
-      return resp;
     })
-    .catch((error) => dispatch(logoutError(error)))
-    .finally(() => {});
+    .catch((error) => dispatch(logoutError(error)));
 };
 
 export const getCurrentUser = () => (dispatch, getState) => {
@@ -161,6 +155,7 @@ const authReducer = (state = initialState, { type, payload }) => {
           email: payload.email,
         },
         token: payload.token,
+        error: null,
       };
 
     case SIGNUP_ERROR:
@@ -177,6 +172,7 @@ const authReducer = (state = initialState, { type, payload }) => {
           email: payload.email,
         },
         token: payload.token,
+        error: null,
       };
 
     case LOGIN_ERROR:
@@ -201,6 +197,7 @@ const authReducer = (state = initialState, { type, payload }) => {
           name: payload.name,
           email: payload.email,
         },
+        error: null,
       };
 
     case GET_CURRENT_USER_ERROR:

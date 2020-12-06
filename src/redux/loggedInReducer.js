@@ -5,6 +5,8 @@ import {
   SIGNUP_ERROR,
   LOGIN_ERROR,
   GET_CURRENT_USER_ERROR,
+  LOGOUT_SUCCESS,
+  LOGOUT_ERROR,
 } from "./authReducer";
 
 const initialState = {
@@ -23,6 +25,8 @@ const loggedInReducer = (state = initialState, action) => {
     case SIGNUP_ERROR:
     case LOGIN_ERROR:
     case GET_CURRENT_USER_ERROR:
+    case LOGOUT_SUCCESS:
+    case LOGOUT_ERROR:
       return {
         ...state,
         loggedIn: false,

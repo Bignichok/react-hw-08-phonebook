@@ -1,5 +1,7 @@
 import { contactsAPI } from "../api/api";
 
+import { LOGOUT_SUCCESS } from "./authReducer";
+
 const FETCH_CONTACTS_START = "FETCH_CONTACTS_START";
 const FETCH_CONTACTS_SUCCESS = "FETCH_CONTACTS_SUCCESS";
 const FETCH_FAILURE = "FETCH_FAILURE";
@@ -186,6 +188,9 @@ const phoneBookReducers = (state = initialState, { type, payload }) => {
         ...state,
         loading: payload.loading,
       };
+
+    case LOGOUT_SUCCESS:
+      return initialState;
 
     default:
       return state;
