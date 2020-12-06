@@ -7,6 +7,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import phoneBookReducers from "./phoneBookReducer";
 import loggedInReducer from "./loggedInReducer";
 import authReducer from "./authReducer";
+import loadingReducer from "./loadingReducer";
 
 const authPersistConfig = {
   key: "auth",
@@ -17,6 +18,7 @@ const authPersistConfig = {
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authReducer),
   loggedIn: loggedInReducer,
+  loading: loadingReducer,
   phoneBook: phoneBookReducers,
 });
 

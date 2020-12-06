@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-
 import { signUp } from "../../redux/authReducer";
+import { getIsLoading } from "../../redux/loadingSelectors";
+
+import Spinner from "../Spinner/Spinner";
 
 import styles from "./SignUpForm.module.css";
 
@@ -67,11 +69,19 @@ class SignUpForm extends Component {
             required
           />
         </div>
-        <button type="submit">Sign Up</button>
+        {this.props.isLoading ? (
+          <Spinner size={25} />
+        ) : (
+          <button type="submit">Sign up</button>
+        )}
       </form>
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  isLoading: getIsLoading(state),
+});
 
 const mapDispatchToProps = (dispatch) => ({
   onSignUpFormSubmit: (name, email, password) => {
@@ -79,4 +89,4 @@ const mapDispatchToProps = (dispatch) => ({
   },
 });
 
-export default connect(null, mapDispatchToProps)(SignUpForm);
+export default connect(mapStateToProps, mapDispatchToProps)(SignUpForm);

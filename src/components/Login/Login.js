@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { login } from "../../redux/authReducer";
 import { getAuthError } from "../../redux/authSelectors";
+import { getIsLoading } from "../../redux/loadingSelectors";
+
+import Spinner from "../Spinner/Spinner";
 
 import styles from "./Login.module.css";
 
@@ -51,7 +54,11 @@ class Login extends Component {
             required
           />
         </div>
-        <button type="submit">Login</button>
+        {this.props.isLoading ? (
+          <Spinner size={25} />
+        ) : (
+          <button type="submit">Login</button>
+        )}
       </form>
     );
   }
@@ -59,6 +66,7 @@ class Login extends Component {
 
 const mapStateToProps = (state) => ({
   error: getAuthError(state),
+  isLoading: getIsLoading(state),
 });
 
 const mapDispatchToProps = {

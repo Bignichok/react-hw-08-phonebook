@@ -8,6 +8,7 @@ import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import PublicRoute from "./components/PublicRoute/PublicRoute";
 
 import "./App.css";
+import Spinner from "./components/Spinner/Spinner";
 
 const Header = lazy(() => import("./components/Header/Header"));
 const PhoneBook = lazy(() => import("./components/PhoneBook/PhoneBook"));
@@ -22,7 +23,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Suspense fallback={<div>loading...</div>}>
+        <Suspense fallback={<Spinner size={150} />}>
           <Header />
 
           <Switch>

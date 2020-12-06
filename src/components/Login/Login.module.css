@@ -1,4 +1,7 @@
 .formLabel {
   display: block;
   cursor: pointer;
+  color: #e38a47;
+  font-size: 16px;
+  font-weight: 500;
 }

@@ -1,4 +1,5 @@
 import { authAPI, tokenController } from "../api/api";
+import { loadingStart, loadingStop } from "./loadingReducer";
 
 const SIGNUP_REQUEST = "SIGNUP_REQUEST";
 export const SIGNUP_SUCCESS = "SIGNUP_SUCCESS";
@@ -87,35 +88,43 @@ const getCurrentUserError = (error) => ({
 
 export const signUp = (name, email, password) => (dispatch) => {
   dispatch(signupRequest());
+  dispatch(loadingStart());
   authAPI
     .createNewUser(name, email, password)
     .then((resp) => {
       tokenController.set(resp.token);
       dispatch(signupSuccess(resp.user, resp.token));
     })
-    .catch((error) => dispatch(signupError(error)));
+    .catch((error) => dispatch(signupError(error)))
+    .finally(() => dispatch(loadingStop()));
 };
 
 export const login = (email, password) => (dispatch) => {
   dispatch(loginRequest());
+  dispatch(loadingStart());
+
   authAPI
     .login(email, password)
     .then((resp) => {
       tokenController.set(resp.token);
       dispatch(loginSuccess(resp.user, resp.token));
     })
-    .catch((error) => dispatch(loginError(error)));
+    .catch((error) => dispatch(loginError(error)))
+    .finally(() => dispatch(loadingStop()));
 };
 
 export const logout = () => (dispatch) => {
   dispatch(logoutRequest());
+  dispatch(loadingStart());
+
   authAPI
     .logout()
     .then((resp) => {
       tokenController.unset();
       dispatch(logoutSuccess());
     })
-    .catch((error) => dispatch(logoutError(error)));
+    .catch((error) => dispatch(logoutError(error)))
+    .finally(() => dispatch(loadingStop()));
 };
 
 export const getCurrentUser = () => (dispatch, getState) => {
@@ -128,12 +137,15 @@ export const getCurrentUser = () => (dispatch, getState) => {
   }
   tokenController.set(persistedToken);
   dispatch(getCurrentUserRequest());
+  dispatch(loadingStart());
+
   authAPI
     .getCurrentUser()
     .then(({ data }) => {
       dispatch(getCurrentUserSuccess(data.name, data.email));
     })
-    .catch((error) => dispatch(getCurrentUserError(error)));
+    .catch((error) => dispatch(getCurrentUserError(error)))
+    .finally(() => dispatch(loadingStop()));
 };
 
 const initialState = {

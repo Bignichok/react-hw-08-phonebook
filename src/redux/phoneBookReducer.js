@@ -96,9 +96,9 @@ export const fetchContacts = () => (dispatch) => {
     .getContacts()
     .then((data) => {
       dispatch(fetchContactsSuccess(data));
-      dispatch(toggleLoading(false));
     })
-    .catch((error) => dispatch(failureRequest(error)));
+    .catch((error) => dispatch(failureRequest(error)))
+    .finally(() => dispatch(toggleLoading(false)));
 };
 
 export const addContact = (name, number) => (dispatch) => {
@@ -108,9 +108,9 @@ export const addContact = (name, number) => (dispatch) => {
     .addContact(name, number)
     .then((data) => {
       dispatch(addContactSuccess(data));
-      dispatch(toggleLoading(false));
     })
-    .catch((error) => dispatch(addContactError(error)));
+    .catch((error) => dispatch(addContactError(error)))
+    .finally(() => dispatch(toggleLoading(false)));
 };
 
 export const deleteContact = (id) => (dispatch) => {
@@ -150,7 +150,7 @@ const phoneBookReducers = (state = initialState, { type, payload }) => {
       };
       return {
         ...state,
-        contacts: [...state.contacts, newContact],
+        contacts: [newContact, ...state.contacts],
       };
 
     case ADD_CONTACT_ERROR:
