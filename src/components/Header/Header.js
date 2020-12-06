@@ -1,9 +1,13 @@
+import { connect } from "react-redux";
 import NavList from "../NavList/NavList";
 import NavListItem from "../NavList/NavListItem/NavListItem";
+import UserMenu from "../UserMenu/UserMenu";
+
+import { getIsAuth } from "../../redux/loggedInSelectors";
 
 import styles from "./Header.module.css";
 
-const Header = () => {
+const Header = ({ isAuth }) => {
   return (
     <header className={styles.header}>
       <NavList>
@@ -11,12 +15,18 @@ const Header = () => {
         <NavListItem path={"/phoneBook"} content={"PhoneBook"} />
       </NavList>
 
-      <NavList>
-        <NavListItem path={"/login"} content={"login"} />
-        <NavListItem path={"/signup"} content={"sign up"} />
-      </NavList>
+      {isAuth ? (
+        <UserMenu />
+      ) : (
+        <NavList>
+          <NavListItem path={"/login"} content={"login"} />
+          <NavListItem path={"/signup"} content={"sign up"} />
+        </NavList>
+      )}
     </header>
   );
 };
 
-export default Header;
+const mapStateToProps = (state) => ({ isAuth: getIsAuth(state) });
+
+export default connect(mapStateToProps, null)(Header);

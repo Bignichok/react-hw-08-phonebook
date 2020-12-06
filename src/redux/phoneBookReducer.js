@@ -4,20 +4,17 @@ const FETCH_CONTACTS_START = "FETCH_CONTACTS_START";
 const FETCH_CONTACTS_SUCCESS = "FETCH_CONTACTS_SUCCESS";
 const FETCH_FAILURE = "FETCH_FAILURE";
 
-const ADD_CONTACT = "ADD_CONTACT";
-const DELETE_CONTACT = "DELETE_CONTACT";
+const ADD_CONTACT_REQUEST = "ADD_CONTACT_REQUEST";
+const ADD_CONTACT_SUCCESS = "ADD_CONTACT_SUCCESS";
+const ADD_CONTACT_ERROR = "ADD_CONTACT_ERROR";
+
+const DELETE_CONTACT_REQUEST = "DELETE_CONTACT_REQUEST";
+const DELETE_CONTACT_SUCCESS = "DELETE_CONTACT_SUCCESS";
+const DELETE_CONTACT_ERROR = "DELETE_CONTACT_ERROR";
 
 const CHANGE_FILTER = "CHANGE_FILTER";
 const TOGGLE_ERROR = "TOGGLE_ERROR";
 const TOGGLE_LOADING = "TOGGLE_LOADING";
-
-const initialState = {
-  contacts: [],
-  filter: "",
-  showError: false,
-  loading: false,
-  error: {},
-};
 
 const fetchContactsStart = () => ({ type: FETCH_CONTACTS_START });
 
@@ -35,18 +32,36 @@ const failureRequest = (error) => ({
   },
 });
 
+const addContactRequest = () => ({ type: ADD_CONTACT_REQUEST });
+
 const addContactSuccess = ({ id, name, number }) => ({
-  type: ADD_CONTACT,
+  type: ADD_CONTACT_SUCCESS,
   payload: {
     contact: { id, name, number },
     showError: false,
   },
 });
 
+const addContactError = (error) => ({
+  type: ADD_CONTACT_ERROR,
+  payload: {
+    error,
+  },
+});
+
+const deleteContactRequest = () => ({ type: DELETE_CONTACT_REQUEST });
+
 const deleteContactSuccess = (id) => ({
-  type: DELETE_CONTACT,
+  type: DELETE_CONTACT_SUCCESS,
   payload: {
     id,
+  },
+});
+
+const deleteContactError = (error) => ({
+  type: DELETE_CONTACT_ERROR,
+  payload: {
+    error,
   },
 });
 
@@ -86,20 +101,29 @@ export const fetchContacts = () => (dispatch) => {
 
 export const addContact = (name, number) => (dispatch) => {
   dispatch(toggleLoading(true));
+  dispatch(addContactRequest());
   contactsAPI
     .addContact(name, number)
     .then((data) => {
       dispatch(addContactSuccess(data));
       dispatch(toggleLoading(false));
     })
-    .catch((error) => dispatch(failureRequest(error)));
+    .catch((error) => dispatch(addContactError(error)));
 };
 
 export const deleteContact = (id) => (dispatch) => {
+  deleteContactRequest();
   contactsAPI
     .deleteContact(id)
     .then(() => dispatch(deleteContactSuccess(id)))
-    .catch((error) => dispatch(failureRequest(error)));
+    .catch((error) => dispatch(deleteContactError(error)));
+};
+const initialState = {
+  contacts: [],
+  filter: "",
+  showError: false,
+  loading: false,
+  error: {},
 };
 
 const phoneBookReducers = (state = initialState, { type, payload }) => {
@@ -116,7 +140,7 @@ const phoneBookReducers = (state = initialState, { type, payload }) => {
         error: payload.error,
       };
 
-    case ADD_CONTACT:
+    case ADD_CONTACT_SUCCESS:
       const newContact = {
         id: payload.contact.id,
         name: payload.contact.name,
@@ -127,10 +151,22 @@ const phoneBookReducers = (state = initialState, { type, payload }) => {
         contacts: [...state.contacts, newContact],
       };
 
-    case DELETE_CONTACT:
+    case ADD_CONTACT_ERROR:
+      return {
+        ...state,
+        error: payload.error,
+      };
+
+    case DELETE_CONTACT_SUCCESS:
       return {
         ...state,
         contacts: state.contacts.filter((contact) => contact.id !== payload.id),
+      };
+
+    case DELETE_CONTACT_ERROR:
+      return {
+        ...state,
+        error: payload.error,
       };
 
     case CHANGE_FILTER:

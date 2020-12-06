@@ -1,8 +1,14 @@
 import React, { Component, lazy, Suspense } from "react";
-import { Route, Switch } from "react-router-dom";
+import { connect } from "react-redux";
+import { Switch } from "react-router-dom";
+
+import { getCurrentUser } from "./redux/authReducer";
+
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
+import PublicRoute from "./components/PublicRoute/PublicRoute";
 
 import "./App.css";
-// import Header from "./components/Header/Header";
+
 const Header = lazy(() => import("./components/Header/Header"));
 const PhoneBook = lazy(() => import("./components/PhoneBook/PhoneBook"));
 const HomePage = lazy(() => import("./components/HomePage/HomePage"));
@@ -10,6 +16,9 @@ const SignUpForm = lazy(() => import("./components/SignUpForm/SignUpForm"));
 const Login = lazy(() => import("./components/Login/Login"));
 
 class App extends Component {
+  componentDidMount() {
+    this.props.getCurrentUser();
+  }
   render() {
     return (
       <div className="App">
@@ -17,10 +26,10 @@ class App extends Component {
           <Header />
 
           <Switch>
-            <Route exact path="/" component={HomePage} />
-            <Route path="/phoneBook" component={PhoneBook} />
-            <Route path="/login" component={Login} />
-            <Route path="/signup" component={SignUpForm} />
+            <PublicRoute exact path="/" component={HomePage} />
+            <PrivateRoute path="/phoneBook" component={PhoneBook} />
+            <PublicRoute restricted path="/login" component={Login} />
+            <PublicRoute restricted path="/signup" component={SignUpForm} />
           </Switch>
         </Suspense>
       </div>
@@ -28,4 +37,8 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapDispatchToProps = {
+  getCurrentUser,
+};
+
+export default connect(null, mapDispatchToProps)(App);

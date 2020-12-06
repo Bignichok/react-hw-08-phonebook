@@ -1,16 +1,20 @@
-import { authAPI, token } from "../api/api";
+import { authAPI, tokenController } from "../api/api";
 
 const SIGNUP_REQUEST = "SIGNUP_REQUEST";
-const SIGNUP_SUCCESS = "SIGNUP_SUCCESS";
-const SIGNUP_ERROR = "SIGNUP_ERROR";
+export const SIGNUP_SUCCESS = "SIGNUP_SUCCESS";
+export const SIGNUP_ERROR = "SIGNUP_ERROR";
 
 const LOGIN_REQUEST = "LOGIN_REQUEST";
-const LOGIN_SUCCESS = "LOGIN_SUCCESS";
-const LOGIN_ERROR = "LOGIN_ERROR";
+export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+export const LOGIN_ERROR = "LOGIN_ERROR";
 
 const LOGOUT_REQUEST = "LOGOUT_REQUEST";
 const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
 const LOGOUT_ERROR = "LOGOUT_ERROR";
+
+const GET_CURRENT_USER_REQUEST = "GET_CURRENT_USER_REQUEST";
+export const GET_CURRENT_USER_SUCCESS = "GET_CURRENT_USER_SUCCESS";
+export const GET_CURRENT_USER_ERROR = "GET_CURRENT_USER_ERROR";
 
 const signupRequest = () => ({ type: SIGNUP_REQUEST });
 
@@ -62,15 +66,32 @@ const logoutError = (error) => ({
   },
 });
 
+const getCurrentUserRequest = () => ({
+  type: GET_CURRENT_USER_REQUEST,
+});
+
+const getCurrentUserSuccess = (name, email) => ({
+  type: GET_CURRENT_USER_SUCCESS,
+  payload: {
+    name,
+    email,
+  },
+});
+
+const getCurrentUserError = (error) => ({
+  type: GET_CURRENT_USER_ERROR,
+  payload: {
+    error,
+  },
+});
+
 export const signUp = (name, email, password) => (dispatch) => {
   dispatch(signupRequest());
   authAPI
     .createNewUser(name, email, password)
     .then((resp) => {
-      console.log(resp);
-
       dispatch(signupSuccess(resp.user, resp.token));
-      token.set(resp.token);
+      tokenController.set(resp.token);
       return resp;
     })
     .catch((error) => dispatch(signupError(error)))
@@ -82,10 +103,8 @@ export const login = (email, password) => (dispatch) => {
   authAPI
     .login(email, password)
     .then((resp) => {
-      console.log(resp);
-      console.log(resp.user);
       dispatch(loginSuccess(resp.user, resp.token));
-      token.set(resp.token);
+      tokenController.set(resp.token);
       return resp;
     })
     .catch((error) => dispatch(loginError(error)))
@@ -97,13 +116,30 @@ export const logout = () => (dispatch) => {
   authAPI
     .logout()
     .then((resp) => {
-      console.log(resp);
-      token.unset();
+      tokenController.unset();
       dispatch(logoutSuccess());
       return resp;
     })
     .catch((error) => dispatch(logoutError(error)))
     .finally(() => {});
+};
+
+export const getCurrentUser = () => (dispatch, getState) => {
+  const {
+    auth: { token: persistedToken },
+  } = getState();
+
+  if (!persistedToken) {
+    return;
+  }
+  tokenController.set(persistedToken);
+  dispatch(getCurrentUserRequest());
+  authAPI
+    .getCurrentUser()
+    .then(({ data }) => {
+      dispatch(getCurrentUserSuccess(data.name, data.email));
+    })
+    .catch((error) => dispatch(getCurrentUserError(error)));
 };
 
 const initialState = {
@@ -134,7 +170,6 @@ const authReducer = (state = initialState, { type, payload }) => {
       };
 
     case LOGIN_SUCCESS:
-      console.log(payload);
       return {
         ...state,
         user: {
@@ -154,6 +189,21 @@ const authReducer = (state = initialState, { type, payload }) => {
       return initialState;
 
     case LOGOUT_ERROR:
+      return {
+        ...state,
+        error: payload.error,
+      };
+
+    case GET_CURRENT_USER_SUCCESS:
+      return {
+        ...state,
+        user: {
+          name: payload.name,
+          email: payload.email,
+        },
+      };
+
+    case GET_CURRENT_USER_ERROR:
       return {
         ...state,
         error: payload.error,

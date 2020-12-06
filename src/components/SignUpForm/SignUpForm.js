@@ -75,7 +75,6 @@ class SignUpForm extends Component {
 
 const mapDispatchToProps = (dispatch) => ({
   onSignUpFormSubmit: (name, email, password) => {
-    console.log(name, email, password);
     return dispatch(signUp(name, email, password));
   },
 });
