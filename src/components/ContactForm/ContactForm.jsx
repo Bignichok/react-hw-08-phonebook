@@ -21,9 +21,10 @@ class ContactForm extends Component {
     number: "",
   };
 
-  inputChangeHandler = (e,type) => {
+  inputChangeHandler = ({ target }) => {
+    const {name,value} = target
     this.setState({
-      [type]:e.target.value
+      [name]:value
     })
   }
 
@@ -52,7 +53,7 @@ class ContactForm extends Component {
             type="text"
             name="name"
             value={this.state.name}
-            onChange={(e)=>this.inputChangeHandler(e,'name')}
+            onChange={this.inputChangeHandler}
           />
         </label>
         <label htmlFor="formNumber" className={styles.formLabel}>
@@ -60,11 +61,12 @@ class ContactForm extends Component {
           <input
             className={styles.formInput}
             id="formNumber"
-            type="number"
+            type="tel"
+            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
             name="number"
             value={this.state.number}
             required
-            onChange={(e)=>this.inputChangeHandler(e,'number')}
+            onChange={this.inputChangeHandler}
           />
         </label>
         <button type="submit">Add contact</button>
